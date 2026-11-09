@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 1. 统一版本管理：使用 Spring Boot 父工程作为基石 -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <!-- 锁定整个生态的基础版本 -->
+        <version>4.1.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>lwj.Code</groupId>
+    <artifactId>Server</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Server</name>
+    <description>Server Backend Application</description>
+
+    <!-- 2. 全局变量：提取独立的版本号配置 -->
+    <properties>
+        <!-- 指定 Java 编译器版本为 21 -->
+        <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <!-- 3. 核心依赖清单 (剔除了多余的 version，由 Parent 统一管理) -->
+    <dependencies>
+        <!-- Web 模块：引入 MVC、内嵌 Tomcat、Jackson (JSON 处理) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+
+        <!-- Security 模块：提供基础的安全验证、鉴权拦截 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- OAuth2 客户端：支持通过第三方平台（如 GitHub、微信）授权登录 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
+        <!-- Lombok 插件：消除冗长的 Getter/Setter、构造函数 (版本由 Spring Boot Parent 提供) -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- 测试框架模块：包含 JUnit、MockMvc 等 (仅在测试环境生效) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- 4. 构建插件 -->
+    <build>
+        <plugins>
+            <!-- Spring Boot 专属打包插件：负责将项目打包成可直接运行的 Fat JAR -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- 确保 Lombok 在打包时不会被漏掉 -->
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

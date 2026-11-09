@@ -1,0 +1,30 @@
+server:
+  address: 127.0.0.1
+  port: 8081
+  servlet:
+    session:
+      timeout: 30m
+      cookie:
+        name: platform_session
+        http-only: true
+        same-site: lax
+        secure: ${TCEP_SESSION_SECURE:true}
+
+spring:
+  application:
+    name: Server
+  security:
+    oauth2:
+      client:
+        registration:
+          m0:
+            provider: keycloak
+            client-id: tcep-m0
+            client-authentication-method: none
+            authorization-grant-type: authorization_code
+            redirect-uri: http://127.0.0.1:8081/api/v1/auth/callback
+            scope:
+              - openid
+        provider:
+          keycloak:
+            issuer-uri: http://127.0.0.1:8765/realms/tcep-m0
