@@ -1,0 +1,109 @@
+{
+  "realm": "tcep-m0",
+  "displayName": "TCEP M0",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "registrationEmailAsUsername": false,
+  "rememberMe": false,
+  "verifyEmail": false,
+  "loginWithEmailAllowed": false,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": false,
+  "clients": [
+    {
+      "clientId": "tcep-m0",
+      "name": "TCEP M0 Server",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "frontchannelLogout": true,
+      "fullScopeAllowed": false,
+      "redirectUris": [
+        "http://127.0.0.1:8081/api/v1/auth/callback"
+      ],
+      "webOrigins": [
+        "http://127.0.0.1:8081"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ],
+  "users": [
+    {
+      "id": "50000000-0000-4000-8000-000000000001",
+      "username": "synthetic-student-01",
+      "enabled": true,
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "m0-test-only-password",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "id": "50000000-0000-4000-8000-000000000002",
+      "username": "synthetic-student-02",
+      "enabled": true,
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "m0-test-only-password",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "id": "50000000-0000-4000-8000-000000000003",
+      "username": "synthetic-teacher-01",
+      "enabled": true,
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "m0-test-only-password",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "id": "50000000-0000-4000-8000-000000000004",
+      "username": "synthetic-ta-01",
+      "enabled": true,
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "m0-test-only-password",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "id": "50000000-0000-4000-8000-000000000005",
+      "username": "synthetic-outsider-01",
+      "enabled": true,
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "m0-test-only-password",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}
