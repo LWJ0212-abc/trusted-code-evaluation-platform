@@ -44,7 +44,7 @@ public class DatabaseIdentityDirectory implements IdentityDirectory {
         List<CourseMembership> courseMemberships = courseMembershipMapper.selectList(
                         Wrappers.<CourseMembershipEntity>lambdaQuery()
                                 .eq(CourseMembershipEntity::getUserId, boundIdentity.getUserId())
-                                .orderByAsc(CourseMembershipEntity::getCreatedAt)
+                                .orderByAsc(CourseMembershipEntity::getCourseId)
                 ).stream()
                 .map(entity ->
                         new CourseMembership(
