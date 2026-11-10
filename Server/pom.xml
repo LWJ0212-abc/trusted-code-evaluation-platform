@@ -7,7 +7,6 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <!-- 锁定整个生态的基础版本 -->
         <version>4.1.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
@@ -18,21 +17,27 @@
     <name>Server</name>
     <description>Server Backend Application</description>
 
-    <!-- 2. 全局变量：提取独立的版本号配置 -->
+    <!-- 2. 全局变量：版本集中管理区域 -->
     <properties>
-        <!-- 指定 Java 编译器版本为 21 -->
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- 自定义第三方依赖的版本号声明 -->
+        <mybatis-plus.version>3.5.18.1</mybatis-plus.version>
+
+        <!-- MySQL 驱动版本通常由 Spring Boot Parent 自动管理。
+             如果必须强制覆盖为你写的一个特定版本，可以解除下方注释并配置 -->
+        <!-- <mysql.version>8.3.0</mysql.version> -->
     </properties>
 
-    <!-- 3. 核心依赖清单 (剔除了多余的 version，由 Parent 统一管理) -->
+    <!-- 3. 核心依赖清单 -->
     <dependencies>
-        <!-- Web 模块：引入 MVC、内嵌 Tomcat、Jackson (JSON 处理) -->
+        <!-- Web 模块：引入 MVC、内嵌 Tomcat、Jackson (修正为标准的 spring-boot-starter-web) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <!-- Security 模块：提供基础的安全验证、鉴权拦截 -->
@@ -41,23 +46,23 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- OAuth2 客户端：支持通过第三方平台（如 GitHub、微信）授权登录 -->
+        <!-- OAuth2 客户端：支持通过第三方平台（如 Keycloak）授权登录 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
 
-        <!-- Lombok 插件：消除冗长的 Getter/Setter、构造函数 (版本由 Spring Boot Parent 提供) -->
+        <!-- Lombok 插件 (版本由 Spring Boot Parent 提供) -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <!-- 测试框架模块：包含 JUnit、MockMvc 等 (仅在测试环境生效) -->
+        <!-- 测试框架模块 (修正为标准的 spring-boot-starter-test) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -65,17 +70,30 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- MySQL 驱动：删除了 version，直接继承 Spring Boot Parent 定义的最稳定版本 -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- MyBatis-Plus：使用占位符引入全局版本，并修正为兼容 Spring Boot 3+ 的 starter -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
+            <version>${mybatis-plus.version}</version>
+        </dependency>
     </dependencies>
 
     <!-- 4. 构建插件 -->
     <build>
         <plugins>
-            <!-- Spring Boot 专属打包插件：负责将项目打包成可直接运行的 Fat JAR -->
+            <!-- Spring Boot 专属打包插件 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <!-- 确保 Lombok 在打包时不会被漏掉 -->
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
