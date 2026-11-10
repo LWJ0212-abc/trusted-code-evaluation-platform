@@ -16,13 +16,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class DatabaseIdentityDirectoryTest {
 
+    private static final String ISSUER = "http://127.0.0.1:8765/realms/tcep-m0";
+    private static final UUID COURSE_ID = UUID.fromString("10000000-0000-4000-8000-000000000001");
+
     @Autowired
     private IdentityDirectory identityDirectory;
 
     @Test
     void knownStudentMapsToPlatformUserAndCourseMembership() {
         ExternalIdentity identity = new ExternalIdentity(
-                "http://127.0.0.1:8765/realms/tcep-m0",
+                ISSUER,
                 "50000000-0000-4000-8000-000000000001"
         );
 
@@ -35,7 +38,7 @@ public class DatabaseIdentityDirectoryTest {
 
         assertEquals(1, user.memberships().size());
         assertEquals(
-                UUID.fromString("10000000-0000-4000-8000-000000000001"),
+                COURSE_ID,
                 user.memberships().getFirst().courseId()
         );
         assertEquals(
@@ -44,6 +47,62 @@ public class DatabaseIdentityDirectoryTest {
         );
 
         assertTrue(user.platformRoles().isEmpty());
+    }
+
+    @Test
+    void knownTaMapsToTaMembership() {
+        ExternalIdentity identity = new ExternalIdentity(
+                ISSUER,
+                "50000000-0000-4000-8000-000000000004"
+        );
+
+        User user = identityDirectory.find(identity).orElseThrow();
+
+        assertEquals(
+                UUID.fromString("00000000-0000-4000-8000-000000000004"),
+                user.userId()
+        );
+        assertEquals(1, user.memberships().size());
+        assertEquals(COURSE_ID, user.memberships().getFirst().courseId());
+        assertEquals(CourseRole.TA, user.memberships().getFirst().role());
+        assertTrue(user.platformRoles().isEmpty());
+    }
+
+    @Test
+    void knownOutsiderHasNoMemberships() {
+        ExternalIdentity identity = new ExternalIdentity(
+                ISSUER,
+                "50000000-0000-4000-8000-000000000005"
+        );
+
+        User user = identityDirectory.find(identity).orElseThrow();
+
+        assertEquals(
+                UUID.fromString("00000000-0000-4000-8000-000000000005"),
+                user.userId()
+        );
+        assertTrue(user.memberships().isEmpty());
+        assertTrue(user.platformRoles().isEmpty());
+    }
+
+    @Test
+    void unknownSubjectReturnsEmpty() {
+        ExternalIdentity identity = new ExternalIdentity(
+                ISSUER,
+                "50000000-0000-4000-8000-999999999999"
+        );
+
+        assertTrue(identityDirectory.find(identity).isEmpty());
+    }
+
+    @Test
+    void wrongIssuerReturnsEmpty() {
+        ExternalIdentity identity = new ExternalIdentity(
+                "http://127.0.0.1:8765/realms/other",
+                "50000000-0000-4000-8000-000000000001"
+        );
+
+        assertTrue(identityDirectory.find(identity).isEmpty());
     }
 
 }
