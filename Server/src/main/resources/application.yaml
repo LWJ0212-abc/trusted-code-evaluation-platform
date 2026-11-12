@@ -36,6 +36,9 @@ spring:
           keycloak:
             issuer-uri: http://127.0.0.1:8765/realms/tcep-m0
 
+tcep:
+  frontend-url: ${TCEP_FRONTEND_URL:http://127.0.0.1:5173/}
+
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true

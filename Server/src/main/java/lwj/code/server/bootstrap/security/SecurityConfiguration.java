@@ -7,8 +7,11 @@ import lwj.code.server.identity.infrastructure.security.PlatformOidcUserService;
 import lwj.code.server.shared.error.ErrorCode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -45,8 +48,14 @@ public class SecurityConfiguration {
     private final SecurityErrorWriter securityErrorWriter;
     private final PlatformOidcUserService platformOidcUserService;
 
+    @Value("${tcep.frontend-url:http://127.0.0.1:5173/}")
+    private String frontendUrl;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security) {
+        CookieCsrfTokenRepository csrfTokenRepository =
+                CookieCsrfTokenRepository.withHttpOnlyFalse();
+        csrfTokenRepository.setHeaderName("X-CSRF-Token");
         security
                 .authorizeHttpRequests(
                         request -> request
@@ -54,6 +63,7 @@ public class SecurityConfiguration {
                                         "/error",
                                         "/oauth2/**",
                                         "/login/**",
+                                        "/api/v1/auth/login",
                                         "/api/v1/auth/callback",
                                         "/v3/api-docs/**",
                                         "/swagger-ui/**"
@@ -84,12 +94,28 @@ public class SecurityConfiguration {
                                 )
 
                 )
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(csrfTokenRepository)
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                )
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(
                                 userInfo -> userInfo.oidcUserService(platformOidcUserService))
                         .redirectionEndpoint(
                                 endpoint -> endpoint.baseUri("/api/v1/auth/callback")
                         )
+                        .successHandler((request, response, authentication) ->
+                                response.sendRedirect(frontendUrl))
+                        .failureHandler((request, response, exception) ->
+                                response.sendRedirect(frontendUrl + "?auth_error=1"))
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/api/v1/auth/logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("platform_session", "JSESSIONID", "XSRF-TOKEN")
+                        .logoutSuccessHandler((request, response, authentication) ->
+                                response.setStatus(204))
                 );
         return security.build();
     }
