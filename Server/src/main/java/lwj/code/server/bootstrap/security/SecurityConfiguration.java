@@ -54,7 +54,9 @@ public class SecurityConfiguration {
                                         "/error",
                                         "/oauth2/**",
                                         "/login/**",
-                                        "/api/v1/auth/callback"
+                                        "/api/v1/auth/callback",
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 )
@@ -92,8 +94,4 @@ public class SecurityConfiguration {
         return security.build();
     }
 
-    @Bean
-    public OidcUserService oidcUserService(){
-        return new OidcUserService();
-    }
 }

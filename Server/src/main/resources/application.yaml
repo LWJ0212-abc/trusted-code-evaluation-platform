@@ -50,3 +50,9 @@ logging:
     lwj.code.server.identity.infrastructure.persistence.mapper: DEBUG
     org.mybatis: DEBUG
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui/index.html
+    enabled: true
