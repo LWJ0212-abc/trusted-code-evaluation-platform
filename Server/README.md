@@ -1,6 +1,7 @@
 # Server Development Dependencies
 
-The Compose stack starts only Keycloak and its dedicated MySQL database.
+The Compose stack starts Keycloak, its dedicated MySQL database, the separate
+business MySQL database, and RustFS for S3-compatible source/result objects.
 The Spring Boot Server remains a host process so it can be run and debugged
 from IntelliJ IDEA or Maven. This is a local development setup, not a
 production deployment template.
@@ -13,9 +14,9 @@ Copy the environment template and replace every password placeholder:
 Copy-Item .env.example .env
 ```
 
-To reuse locally available images, set `KEYCLOAK_IMAGE` and `MYSQL_IMAGE`
-in `.env` to exact tags shown by `docker image ls`. Compose uses a matching
-local tag first and pulls only when it is missing.
+To reuse locally available images, set `KEYCLOAK_IMAGE`, `MYSQL_IMAGE`, and
+`RUSTFS_IMAGE` in `.env` to exact tags shown by `docker image ls`. Compose uses
+a matching local tag first and pulls only when it is missing.
 
 Default image index digests resolved on 2026-11-09:
 
@@ -34,9 +35,14 @@ docker compose ps
 docker compose logs -f keycloak
 ```
 
-Keycloak is available at `http://127.0.0.1:8765`. MySQL is only reachable
-inside the Compose network and is reserved for Keycloak's own data; it is
-not the application's business database.
+Keycloak is available at `http://127.0.0.1:8765`. The Keycloak database is
+available on `127.0.0.1:3308`; the separate business database is on
+`127.0.0.1:3309`. RustFS exposes its S3 API at `http://127.0.0.1:19000` and
+its development console at `http://127.0.0.1:19001`.
+
+Create the configured source and result buckets before running submission
+integration tests. The application uses the business database and RustFS;
+it never writes business tables into the Keycloak schema.
 
 Start the Java Server separately from IntelliJ or run `mvnw.cmd spring-boot:run`.
 

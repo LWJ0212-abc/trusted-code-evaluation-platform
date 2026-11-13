@@ -26,7 +26,7 @@
         <openapi.version>3.2.0</openapi.version>
         <!-- 自定义第三方依赖的版本号声明 -->
         <mybatis-plus.version>3.5.18.1</mybatis-plus.version>
-
+        <s3.version>2.25.27</s3.version>
         <!-- MySQL 驱动版本通常由 Spring Boot Parent 自动管理。
              如果必须强制覆盖为你写的一个特定版本，可以解除下方注释并配置 -->
         <!-- <mysql.version>8.3.0</mysql.version> -->
@@ -95,6 +95,12 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${openapi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>${s3.version}</version>
         </dependency>
     </dependencies>
 

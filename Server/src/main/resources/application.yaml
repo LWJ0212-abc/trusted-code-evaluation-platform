@@ -16,7 +16,7 @@ spring:
   config:
     import: optional:file:.env[.properties]
   datasource:
-    url: jdbc:mysql://${TCEP_DB_HOST:127.0.0.1}:${TCEP_DB_PORT:3308}/${TCEP_DB_NAME:tcep}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${TCEP_DB_HOST:127.0.0.1}:${TCEP_DB_PORT:3309}/${TCEP_DB_NAME:code_platform}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: ${TCEP_DB_USERNAME}
     password: ${TCEP_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -38,6 +38,17 @@ spring:
 
 tcep:
   frontend-url: ${TCEP_FRONTEND_URL:http://127.0.0.1:5173/}
+  object-store:
+    endpoint: ${TCEP_OBJECT_STORE_ENDPOINT:http://127.0.0.1:19000}
+    region: ${TCEP_OBJECT_STORE_REGION:us-east-1}
+    access-key: ${RUSTFS_ACCESS_KEY}
+    secret-key: ${RUSTFS_SECRET_KEY}
+    source-bucket: ${TCEP_SOURCE_BUCKET:tcep-source}
+    result-bucket: ${TCEP_RESULT_BUCKET:tcep-result}
+    staging-prefix: ${TCEP_OBJECT_STAGING_PREFIX:staging/}
+    source-prefix: ${TCEP_OBJECT_SOURCE_PREFIX:submissions/}
+    result-prefix: ${TCEP_OBJECT_RESULT_PREFIX:results/}
+    staging-ttl: ${TCEP_OBJECT_STAGING_TTL:PT24H}
 
 mybatis-plus:
   configuration:

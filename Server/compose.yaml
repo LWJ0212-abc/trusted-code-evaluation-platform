@@ -11,7 +11,7 @@ services:
       MYSQL_PASSWORD: ${KEYCLOAK_DB_PASSWORD:?Set KEYCLOAK_DB_PASSWORD in .env}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
     ports:
-      - "127.0.0.1:${TCEP_DB_PORT:-3308}:3306"
+      - "127.0.0.1:${KEYCLOAK_DB_PORT:-3308}:3306"
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_0900_ai_ci
@@ -27,6 +27,65 @@ services:
       start_period: 30s
     networks:
       - identity
+
+  business-mysql:
+    image: ${MYSQL_IMAGE:?Set MYSQL_IMAGE in .env}
+    pull_policy: missing
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${TCEP_DB_NAME:-code_platform}
+      MYSQL_USER: ${TCEP_DB_USERNAME:-coder}
+      MYSQL_PASSWORD: ${TCEP_DB_PASSWORD:?Set TCEP_DB_PASSWORD in .env}
+      # Keep existing local setups runnable; set TCEP_DB_ROOT_PASSWORD explicitly
+      # when the business database must use a different root password.
+      MYSQL_ROOT_PASSWORD: ${TCEP_DB_ROOT_PASSWORD:-${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}}
+    ports:
+      - "127.0.0.1:${TCEP_BUSINESS_DB_PORT:-3309}:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    volumes:
+      - business_mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping --host=127.0.0.1 --user=root --password="$${MYSQL_ROOT_PASSWORD}" --silent
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - business
+
+  rustfs:
+    image: ${RUSTFS_IMAGE:-rustfs/rustfs:latest}
+    pull_policy: missing
+    restart: unless-stopped
+    command:
+      - --address
+      - :9000
+      - --console-address
+      - :9001
+    environment:
+      RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY:-tcep-rustfs-dev-access}
+      RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY:-tcep-rustfs-dev-secret-change-me}
+    ports:
+      - "127.0.0.1:${RUSTFS_API_PORT:-19000}:9000"
+      - "127.0.0.1:${RUSTFS_CONSOLE_PORT:-19001}:9001"
+    volumes:
+      - rustfs_data:/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          wget --no-verbose --tries=1 --spider
+          http://127.0.0.1:9000/health 2>/dev/null || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - business
 
   keycloak:
     image: ${KEYCLOAK_IMAGE:?Set KEYCLOAK_IMAGE in .env}
@@ -71,7 +130,13 @@ services:
 networks:
   identity:
     driver: bridge
+  business:
+    driver: bridge
 
 volumes:
   keycloak_mysql_data:
     name: tcep_keycloak_mysql_data
+  business_mysql_data:
+    name: tcep_business_mysql_data
+  rustfs_data:
+    name: tcep_rustfs_data

@@ -9,7 +9,6 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 
 @Configuration
 @Slf4j
