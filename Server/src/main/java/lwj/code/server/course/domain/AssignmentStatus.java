@@ -1,4 +1,4 @@
-package lwj.code.server.submission.domain;
+package lwj.code.server.course.domain;
 
 /**
  * 作业状态

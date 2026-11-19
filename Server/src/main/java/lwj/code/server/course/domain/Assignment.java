@@ -1,6 +1,7 @@
-package lwj.code.server.submission.domain;
+package lwj.code.server.course.domain;
 
 import lombok.Builder;
+
 import java.time.LocalDateTime;
 
 /**

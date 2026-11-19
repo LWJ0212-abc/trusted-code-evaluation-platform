@@ -1,6 +1,6 @@
-package lwj.code.server.submission.application;
+package lwj.code.server.course.application;
 
-import lwj.code.server.submission.domain.Assignment;
+import lwj.code.server.course.domain.Assignment;
 import java.util.Optional;
 
 /**

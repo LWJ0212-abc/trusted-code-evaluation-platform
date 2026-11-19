@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.HexFormat;
 
@@ -24,7 +25,7 @@ public class SourceObjectValidator {
     private final SourceObjectRepository objectRepository;
     //*从rustfs里读取元信息
     private final ObjectStore objectStore;
-
+    private final Clock clock;
     /**
      * 校验上传对象是否可以用于当前提交。
      *
@@ -113,7 +114,7 @@ public class SourceObjectValidator {
 
     private void validateExpiration(SourceObject object) {
         if (object.expiresAt() != null &&
-                object.expiresAt().isBefore(LocalDateTime.now())
+                object.expiresAt().isBefore(LocalDateTime.now(clock))
         ) {
             throw new IllegalArgumentException("上传对象已过期");
         }

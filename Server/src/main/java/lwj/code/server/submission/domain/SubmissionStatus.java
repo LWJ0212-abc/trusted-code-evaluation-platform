@@ -22,4 +22,6 @@ public enum SubmissionStatus {
 
     /** 提交未通过校验或被系统拒绝。 */
     REJECTED
+
+
 }

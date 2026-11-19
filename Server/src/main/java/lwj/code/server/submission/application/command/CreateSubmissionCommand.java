@@ -1,5 +1,8 @@
 package lwj.code.server.submission.application.command;
 
+import lombok.Builder;
+
+@Builder
 public record CreateSubmissionCommand(
         /**
          * 当前登录用户 ID。

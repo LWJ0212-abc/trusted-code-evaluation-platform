@@ -1,12 +1,12 @@
-package lwj.code.server.submission.infrastructure.persistence.repository;
+package lwj.code.server.course.infrastructure.persistence.repository;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lwj.code.server.submission.application.AssignmentRepository;
-import lwj.code.server.submission.domain.Assignment;
-import lwj.code.server.submission.infrastructure.persistence.entity.AssignmentEntity;
-import lwj.code.server.submission.infrastructure.persistence.mapper.AssignmentMapper;
+import lwj.code.server.course.application.AssignmentRepository;
+import lwj.code.server.course.domain.Assignment;
+import lwj.code.server.course.infrastructure.persistence.entity.AssignmentEntity;
+import lwj.code.server.course.infrastructure.persistence.mapper.AssignmentMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

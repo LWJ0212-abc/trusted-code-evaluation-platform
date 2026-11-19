@@ -1,15 +1,18 @@
 package lwj.code.server.api;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Component
 public class RequestTraceId {
 
 
     private static final String ATTRIBUTE=RequestTraceId.class.getName()+".value";
+    private final UuidGenerator uuidGenerator;
 
     /**
      * 获取当前请求的追踪编号
@@ -23,7 +26,7 @@ public class RequestTraceId {
             return traceId;
         }
 
-        String traceId = UUID.randomUUID().toString();
+        String traceId = uuidGenerator.nextUuid7().toString();
         request.setAttribute(ATTRIBUTE, traceId);
         return traceId;
     }

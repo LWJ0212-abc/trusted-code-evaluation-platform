@@ -15,6 +15,16 @@ public enum ErrorCode {
     INVALID_REQUEST(HttpStatus.BAD_REQUEST),
 
     /**
+     * 创建提交时未提供幂等请求头 (HTTP 400 Bad Request)。
+     */
+    MISSING_IDEMPOTENCY_KEY(HttpStatus.BAD_REQUEST),
+
+    /**
+     * 幂等键与已有请求内容冲突 (HTTP 409 Conflict)。
+     */
+    IDEMPOTENCY_CONFLICT(HttpStatus.CONFLICT),
+
+    /**
      * 身份未注册/用户不存在 (HTTP 401 Unauthorized / 404 Not Found)
      * 场景：用户尝试登录或进行操作时，系统发现该账号（手机号、邮箱或外部ID）在当前系统中尚未注册。
      * 示例：新用户直接使用第三方扫码登录，但该第三方账号还未与本系统的账号绑定。

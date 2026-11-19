@@ -12,6 +12,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.time.Clock;
 
 /**
  * 处理认证，授权，csrf异常
@@ -21,6 +22,7 @@ import java.util.List;
 public class SecurityErrorWriter {
     private final ObjectMapper objectMapper;
     private final RequestTraceId requestTraceId;
+    private final Clock clock;
 
     public void write(
             HttpServletRequest request,
@@ -36,14 +38,12 @@ public class SecurityErrorWriter {
 
         String traceId=requestTraceId.getOrCreate(request);
 
-        ApiErrorResponse apiresponse=new ApiErrorResponse(
-                code.name(),
+        ApiResponse<Void> apiresponse=ApiResponse.failure(
+                code.toString(),
                 safeMessage,
                 traceId,
                 retryable,
-                null,
-                null,
-                List.of()
+                clock
         );
 
         response.setStatus(code.getStatus().value());

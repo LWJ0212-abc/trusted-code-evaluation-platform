@@ -27,7 +27,8 @@ public interface SubmissionService {
      * @return 创建成功并持久化后的提交实体
      */
     Submission createSubmission(
-            CreateSubmissionCommand command
+            CreateSubmissionCommand command,
+            String traceId
     );
 
     /**

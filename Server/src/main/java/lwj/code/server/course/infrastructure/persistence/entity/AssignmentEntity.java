@@ -1,12 +1,13 @@
-package lwj.code.server.submission.infrastructure.persistence.entity;
+package lwj.code.server.course.infrastructure.persistence.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import lwj.code.server.submission.domain.AssignmentStatus;
+import lwj.code.server.course.domain.AssignmentStatus;
 
 import java.time.LocalDateTime;
 
@@ -24,7 +25,7 @@ public class AssignmentEntity {
     /**
      * 作业唯一标识 ID（主键）
      */
-    @TableId
+    @TableId(value = "assignment_id",type = IdType.INPUT)
     private String assignmentId;
 
     /**

@@ -5,12 +5,13 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lwj.code.server.submission.application.AssignmentSubmissionCounterRepository;
-import lwj.code.server.submission.domain.Assignment;
+import lwj.code.server.course.domain.Assignment;
 import lwj.code.server.submission.infrastructure.persistence.entity.AssignmentSubmissionCounterEntity;
 import lwj.code.server.submission.infrastructure.persistence.mapper.AssignmentSubmissionCounterMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 public class AssignmentSubmissionCounterRepositoryImpl implements AssignmentSubmissionCounterRepository {
 
     private final AssignmentSubmissionCounterMapper counterMapper;
+    private final Clock clock;
 
     @Override
     @Transactional
@@ -35,21 +37,21 @@ public class AssignmentSubmissionCounterRepositoryImpl implements AssignmentSubm
             throw new IllegalArgumentException("ownerId 不能为空");
         }
 
-        AssignmentSubmissionCounterEntity entity =
-                findCounter(assignment.assignmentId(), ownerId);
+        AssignmentSubmissionCounterEntity entity =findCounter(assignment.assignmentId(),ownerId);
+
         //* 初始化提交记录
         if (entity == null) {
             int inserted = counterMapper.insertIgnore(
                     assignment.assignmentId(),
                     ownerId,
                     assignment.maxAttempts(),
-                    LocalDateTime.now()
+                    LocalDateTime.now(clock)
             );
             if (inserted==1){
                 return 1L;
             }
             //返回的是0的话，进行查询
-            entity=findCounter(assignment.assignmentId(),ownerId);
+            entity=counterMapper.selectForUpdate(assignment.assignmentId(), ownerId);
             if (entity==null){
                 throw new IllegalStateException("无法读取提交计数器");
             }
@@ -76,7 +78,7 @@ public class AssignmentSubmissionCounterRepositoryImpl implements AssignmentSubm
         }
 
         // 当前时间
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(clock);
         entity.setUpdatedAt(now);
 
         // 计算下一次提交次数

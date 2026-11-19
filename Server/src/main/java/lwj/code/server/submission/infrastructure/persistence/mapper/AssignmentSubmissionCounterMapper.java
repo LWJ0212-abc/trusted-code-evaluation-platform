@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import lwj.code.server.submission.infrastructure.persistence.entity.AssignmentSubmissionCounterEntity;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 
@@ -50,4 +51,24 @@ VALUES
             @Param("maxAttempts") Integer maxAttempts,
             @Param("updatedAt") LocalDateTime updatedAt
     );
+
+
+    @Select("""
+    SELECT assignment_id,
+           student_id,
+           last_attempt_no,
+           accepted_count,
+           max_attempts,
+           version,
+           updated_at
+    FROM assignment_submission_counter
+    WHERE assignment_id = #{assignmentId}
+      AND student_id = #{studentId}
+    FOR UPDATE
+    """)
+    AssignmentSubmissionCounterEntity selectForUpdate(
+            @Param("assignmentId") String assignmentId,
+            @Param("studentId") String studentId
+    );
+
 }

@@ -11,10 +11,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 
 @Service
@@ -23,26 +22,38 @@ import java.util.UUID;
 public class SubmissionServiceImpl implements SubmissionService {
 
     private final SubmissionRepository submissionRepository;
-    private final AssignmentSubmissionCounterRepository assignmentSubmissionCounterRepository;
-    private final AssignmentRepository assignmentRepository;
     private final SubmissionCreator submissionCreator;
+    private final SourceObjectValidator sourceObjectValidator;
+    private final Clock clock;
     /**
      * 创建一次正式提交
+     *
      * @param command 包含创建提交所需全部上下文参数的命令对象（CQRS 模式中的 Command）
      * @return
      */
     @Override
-    public Submission createSubmission(CreateSubmissionCommand command) {
+    public Submission createSubmission(CreateSubmissionCommand command,String traceId) {
         validateCommand(command);
 
         Optional<Submission> existing = findByIdempotencyKey(command);
         if (existing.isPresent()) {
             return returnIfSameRequest(existing.get(), command);
         }
+        // 已有相同幂等请求时，前面已经直接返回。
+        // 只有新请求才需要读取对象并校验摘要。
+        SourceObject validatedObject = sourceObjectValidator.validate(
+                command.uploadId(),
+                command.ownerId(),
+                command.assignmentId(),
+                command.contentVersion(),
+                command.sha256()
+        );
 
         try {
-            return submissionCreator.createSubmission(command);
+            //* 返回创建的submission
+            return submissionCreator.createSubmission(command, validatedObject,traceId);
         } catch (DuplicateKeyException e) {
+            //* 双查
             Optional<Submission> winner = findByIdempotencyKey(command);
             if (winner.isEmpty()) {
                 throw e;
@@ -50,6 +61,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             return returnIfSameRequest(winner.get(), command);
         }
     }
+
     private Submission returnIfSameRequest(
             Submission existing,
             CreateSubmissionCommand command
@@ -67,7 +79,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     private Optional<Submission> findByIdempotencyKey(CreateSubmissionCommand command) {
         return submissionRepository.findByIdempotencyKey(
                 command.ownerId(),
-                command.assignmentId(), 
+                command.assignmentId(),
                 command.idempotencyKey()
         );
     }
@@ -75,7 +87,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     @Override
     public Submission getSubmission(String submissionId, String ownerId) {
-        if (submissionId==null||submissionId.isBlank()){
+        if (submissionId == null || submissionId.isBlank()) {
             throw new IllegalArgumentException("submissionId不能为空");
         }
         if (ownerId == null || ownerId.isBlank()) {
@@ -94,18 +106,18 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Submission updateStatus(String submissionId, SubmissionStatus status) {
-        if (submissionId==null||submissionId.isBlank()){
+        if (submissionId == null || submissionId.isBlank()) {
             throw new IllegalArgumentException("submissionId不能为空");
         }
         if (status == null) {
             throw new IllegalArgumentException("status 不能为空");
         }
         //* 查询submission
-        Submission submission=submissionRepository.findById(submissionId)
-                .orElseThrow(()->new IllegalStateException("该提交不存在"));
+        Submission submission = submissionRepository.findById(submissionId)
+                .orElseThrow(() -> new IllegalStateException("该提交不存在"));
 
         //*使用record自身的状态转化
-        LocalDateTime now=LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(clock);
         Submission newSubmission = submission.transitionTo(status, now);
         return submissionRepository.updateStatus(newSubmission);
     }
@@ -138,8 +150,8 @@ public class SubmissionServiceImpl implements SubmissionService {
                 || command.idempotencyKey().isBlank()) {
             throw new IllegalArgumentException("idempotencyKey 不能为空");
         }
-        if (command.contentVersion()==null||
-        command.contentVersion().isBlank()){
+        if (command.contentVersion() == null ||
+                command.contentVersion().isBlank()) {
             throw new IllegalArgumentException("contentVersion不能为空");
         }
     }

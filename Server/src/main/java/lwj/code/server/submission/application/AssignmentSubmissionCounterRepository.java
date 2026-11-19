@@ -1,6 +1,6 @@
 package lwj.code.server.submission.application;
 
-import lwj.code.server.submission.domain.Assignment;
+import lwj.code.server.course.domain.Assignment;
 
 public interface AssignmentSubmissionCounterRepository {
 

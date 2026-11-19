@@ -7,13 +7,20 @@ import lwj.code.server.identity.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "spring.datasource.url=jdbc:h2:mem:identity-test;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.username=sa",
+        "spring.datasource.password=",
+        "spring.datasource.driver-class-name=org.h2.Driver"
+})
+@Sql(scripts = "/identity-test-fixture.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class DatabaseIdentityDirectoryTest {
 
     private static final String ISSUER = "http://127.0.0.1:8765/realms/tcep-m0";

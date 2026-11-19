@@ -27,6 +27,8 @@
         <!-- 自定义第三方依赖的版本号声明 -->
         <mybatis-plus.version>3.5.18.1</mybatis-plus.version>
         <s3.version>2.25.27</s3.version>
+        <uuidcreator.version>6.1.1</uuidcreator.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
         <!-- MySQL 驱动版本通常由 Spring Boot Parent 自动管理。
              如果必须强制覆盖为你写的一个特定版本，可以解除下方注释并配置 -->
         <!-- <mysql.version>8.3.0</mysql.version> -->
@@ -75,6 +77,17 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>1.5.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- MySQL 驱动：删除了 version，直接继承 Spring Boot Parent 定义的最稳定版本 -->
         <dependency>
@@ -101,6 +114,28 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
             <version>${s3.version}</version>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/com.github.f4b6a3/uuid-creator -->
+        <dependency>
+            <groupId>com.github.f4b6a3</groupId>
+            <artifactId>uuid-creator</artifactId>
+            <version>${uuidcreator.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${testcontainers.version}</version>
+        <scope>test</scope>
         </dependency>
     </dependencies>
 
