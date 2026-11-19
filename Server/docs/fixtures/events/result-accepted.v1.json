@@ -1,0 +1,16 @@
+{
+  "event_id": "10000000-0000-4000-8000-000000000002",
+  "event_type": "result.accepted",
+  "schema_version": 1,
+  "occurred_at": "2026-11-17T02:05:00Z",
+  "aggregate_id": "30000000-0000-4000-8000-000000000001",
+  "aggregate_revision": "1",
+  "trace_id": "trace-01JCV6QZ5XW9F4M9V8P7",
+  "payload": {
+    "evaluation_task_id": "30000000-0000-4000-8000-000000000001",
+    "evaluation_result_id": "50000000-0000-4000-8000-000000000001",
+    "content_version": "40000000-0000-4000-8000-000000000001",
+    "result_digest": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    "batch_id": null
+  }
+}

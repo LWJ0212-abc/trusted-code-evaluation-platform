@@ -1,0 +1,35 @@
+CREATE TABLE IF NOT EXISTS external_identity (
+    issuer VARCHAR(255) NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    user_id CHAR(36) NOT NULL,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (issuer, subject)
+);
+
+CREATE TABLE IF NOT EXISTS course_membership (
+    course_id CHAR(36) NOT NULL,
+    user_id CHAR(36) NOT NULL,
+    role VARCHAR(32) NOT NULL,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (course_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS platform_user_role (
+    user_id CHAR(36) NOT NULL,
+    role VARCHAR(32) NOT NULL,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (user_id, role)
+);
+
+DELETE FROM platform_user_role;
+DELETE FROM course_membership;
+DELETE FROM external_identity;
+
+INSERT INTO external_identity (issuer, subject, user_id) VALUES
+('http://127.0.0.1:8765/realms/tcep-m0', '50000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000001'),
+('http://127.0.0.1:8765/realms/tcep-m0', '50000000-0000-4000-8000-000000000004', '00000000-0000-4000-8000-000000000004'),
+('http://127.0.0.1:8765/realms/tcep-m0', '50000000-0000-4000-8000-000000000005', '00000000-0000-4000-8000-000000000005');
+
+INSERT INTO course_membership (course_id, user_id, role) VALUES
+('10000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000001', 'STUDENT'),
+('10000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000004', 'TA');

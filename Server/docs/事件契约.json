@@ -1,0 +1,466 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:tcep:events:v1",
+  "title": "可信代码评测平台核心领域事件 v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "event_type": {
+          "const": "evaluation.requested"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "aggregate_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "评测任务聚合 ID，必须等于 payload.evaluation_task_id"
+        },
+        "aggregate_revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "description": "对应 evaluation_task.revision 的非负 bigint，以字符串传输；task 创建时为 0，任务事实更新时递增"
+        },
+        "trace_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "submission_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "evaluation_task_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "content_version": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "batch_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "submission_id",
+            "evaluation_task_id",
+            "content_version",
+            "batch_id"
+          ]
+        }
+      },
+      "required": [
+        "event_id",
+        "event_type",
+        "schema_version",
+        "occurred_at",
+        "aggregate_id",
+        "aggregate_revision",
+        "trace_id",
+        "payload"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "event_type": {
+          "const": "result.accepted"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "aggregate_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "评测任务聚合 ID，必须等于 payload.evaluation_task_id"
+        },
+        "aggregate_revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "description": "对应 evaluation_task.revision 的非负 bigint，以字符串传输；任务事实更新时递增"
+        },
+        "trace_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "evaluation_task_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "evaluation_result_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "content_version": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "result_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "batch_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "evaluation_task_id",
+            "evaluation_result_id",
+            "content_version",
+            "result_digest",
+            "batch_id"
+          ]
+        }
+      },
+      "required": [
+        "event_id",
+        "event_type",
+        "schema_version",
+        "occurred_at",
+        "aggregate_id",
+        "aggregate_revision",
+        "trace_id",
+        "payload"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "event_type": {
+          "const": "grade.input_changed"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "aggregate_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "aggregate_revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "description": "非负bigint以字符串传输，避免客户端精度损失"
+        },
+        "trace_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "assignment_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "submission_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "grade_input_revision": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "description": "非负bigint以字符串传输，避免客户端精度损失"
+            },
+            "batch_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "assignment_id",
+            "submission_id",
+            "grade_input_revision",
+            "batch_id"
+          ]
+        }
+      },
+      "required": [
+        "event_id",
+        "event_type",
+        "schema_version",
+        "occurred_at",
+        "aggregate_id",
+        "aggregate_revision",
+        "trace_id",
+        "payload"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "event_type": {
+          "const": "grade.published"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "aggregate_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "aggregate_revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "description": "非负bigint以字符串传输，避免客户端精度损失"
+        },
+        "trace_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "assignment_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "publication_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "publication_seq": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "description": "非负bigint以字符串传输，避免客户端精度损失"
+            },
+            "previous_publication_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "snapshot_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "assignment_id",
+            "publication_id",
+            "publication_seq",
+            "previous_publication_id",
+            "snapshot_digest"
+          ]
+        }
+      },
+      "required": [
+        "event_id",
+        "event_type",
+        "schema_version",
+        "occurred_at",
+        "aggregate_id",
+        "aggregate_revision",
+        "trace_id",
+        "payload"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "event_type": {
+          "const": "publication.aborted"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "aggregate_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "aggregate_revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "description": "非负bigint以字符串传输，避免客户端精度损失"
+        },
+        "trace_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "assignment_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "batch_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "batch_revision": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "description": "非负bigint以字符串传输，避免客户端精度损失"
+            }
+          },
+          "required": [
+            "assignment_id",
+            "batch_id",
+            "batch_revision"
+          ]
+        }
+      },
+      "required": [
+        "event_id",
+        "event_type",
+        "schema_version",
+        "occurred_at",
+        "aggregate_id",
+        "aggregate_revision",
+        "trace_id",
+        "payload"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "event_type": {
+          "const": "feedback.available"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "aggregate_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "aggregate_revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "description": "非负bigint以字符串传输，避免客户端精度损失"
+        },
+        "trace_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "submission_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "feedback_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "visibility_policy_version": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": [
+            "submission_id",
+            "feedback_id",
+            "visibility_policy_version"
+          ]
+        }
+      },
+      "required": [
+        "event_id",
+        "event_type",
+        "schema_version",
+        "occurred_at",
+        "aggregate_id",
+        "aggregate_revision",
+        "trace_id",
+        "payload"
+      ]
+    }
+  ]
+}
